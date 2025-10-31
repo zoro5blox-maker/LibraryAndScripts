@@ -1,0 +1,227 @@
+local GamepassFe = Window:MakeTab({
+    Title = "الجيمباسات (يـضـهـر)",
+    Icon = "rbxassetid://10747382750"
+})
+
+GamepassFe:AddSection({ "- سيارات عاديه (يبين) -" })
+
+local NormalCars = {
+    ["سيارة بوجاتي"] = "Bugatti",
+    ["سيارة إسكاليد"] = "Escalade",
+    ["رولز رويس SUV"] = "RollsSUV",
+    ["سيارة ليموزين"] = "Limo",
+    ["سيارة فيراري"] = "Ferrari",
+    ["عربة غو كارت"] = "GoKartPremium",
+    ["سيارة رولز رويس"] = "RollsRoyce",
+    ["سيارة سوبر"] = "SuperCar",
+    ["سيارة سكايلان"] = "Skyline",
+    ["دراجة هارلي"] = "HarleyDavison",
+    ["ليموزين همر"] = "HummerLimo",
+    ["رابتر مونستر"] = "RaptorMonster",
+    ["جيب 4 أبواب"] = "4DoorJeep",
+    ["سيارة باجي"] = "Buggy",
+    ["سيارة باجا"] = "Baja",
+    ["سيارة رودستر"] = "Roadster",
+    ["سيارة سوات"] = "SWAT",
+    ["سيارة لامبو"] = "Lamboego",
+    ["سيارة همر"] = "Hummer",
+    ["سيارة بنز"] = "Benz",
+    ["سيارة فورمولا 1"] = "Formula1",
+    ["سايبر تراك"] = "CyberTruck",
+    ["سيارة شيفيل"] = "Chevelle",
+    ["فورد فيرلاين"] = "FordFairlane",
+    ["لامبو قديمة"] = "oldlampo",
+    ["سيارة ZZ توب"] = "ZZTop",
+    ["سياره حلوه"] = "3WheelRacer"
+}
+
+GamepassFe:AddSection({ "- سيارات حدث الهالوين-" })
+
+local EventCars = {
+    ["جمجمة الهالوين"] = "HalloweenSkull",
+    ["باتموبيل الهالوين"] = "HalloweenBatMobile",
+    ["سيارة روبلوكس"] = "roblox",
+    ["يقطينة الهالوين"] = "HalloweenPumkin",
+    ["يقطينة مخيفة"] = "HalloweenScaryPumkin",
+    ["سيارة هالوين"] = "HalloweenHerse",
+    ["سيارة برتقالية"] = "HalloweenOrangeCar",
+    ["شاحنة خضراء"] = "HalloweenGreeTruck",
+    ["سيارة بنفسجية"] = "HalloweenPurpleCar",
+    ["سيارة باتموبيل"] = "BatMobile",
+    ["دراجة بيض عيد الفصح"] = "Easter2025EasterEggMotorcycle",
+    ["دراجة بيضة صلبة"] = "Easter2025SolidEggMotorcycle",
+    ["شاحنة وحش عيد الفصح"] = "Easter2025EasterMonsterTruck",
+    ["أرنب عيد الفصح"] = "EasterBunny",
+    ["سيارة صغيرة هالوين"] = "EasterSmall",
+    ["سيارة متوسطة هالوين"] = "EasterMedium",
+    ["سيارة كبيرة هالوين"] = "EasterBig",
+    ["سيارة ميني قديمة هالوين"] = "EasterMiniOld",
+    ["سيارة صغيرة قديمة هالوين"] = "EasterSmallOld",
+    ["سيارة متوسطة قديمة هالوين"] = "EasterMediumOld",
+    ["سيارة كبيرة قديمة هالوين"] = "EasterBigOld"
+}
+
+local SelectedCar_InternalName = nil
+
+local function spawnCar()
+    if SelectedCar_InternalName then
+        local args = {"PickingCar", SelectedCar_InternalName}
+        game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("1Ca1r"):FireServer(unpack(args))
+    end
+end
+
+local normalCarDisplayNames = {}
+for name, _ in pairs(NormalCars) do table.insert(normalCarDisplayNames, name) end
+table.sort(normalCarDisplayNames)
+
+GamepassFe:AddDropdown({
+    Name = "اختر السياره",
+    Options = normalCarDisplayNames,
+    Default = normalCarDisplayNames[1],
+    Callback = function(SelectedDisplayName)
+        SelectedCar_InternalName = NormalCars[SelectedDisplayName]
+    end
+})
+
+local eventCarDisplayNames = {}
+for name, _ in pairs(EventCars) do table.insert(eventCarDisplayNames, name) end
+table.sort(eventCarDisplayNames)
+
+GamepassFe:AddDropdown({
+    Name = "سيارات الهالوين",
+    Options = eventCarDisplayNames,
+    Default = eventCarDisplayNames[1],
+    Callback = function(SelectedDisplayName)
+        SelectedCar_InternalName = EventCars[SelectedDisplayName]
+    end
+})
+
+SelectedCar_InternalName = NormalCars[normalCarDisplayNames[1]]
+
+GamepassFe:AddButton({
+    Name = "تطبيق السيارة",
+    Callback = spawnCar
+})
+
+GamepassFe:AddSection({ "vip حركات" })
+
+local animations = {
+    ["اتكاء"] = 114442287404310,
+    ["قبلة"] = 108798393262707,
+    ["دوران"] = 111154065550513,
+    ["رقصة Griddy"] = 94090358186461,
+    ["تقديم"] = 82247407333647,
+    ["مشية البط"] = 136836683270489,
+    ["قفزة الموت"] = 124584784356176
+}
+
+local player = game.Players.LocalPlayer
+local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+local currentTrack = nil
+local selectedAnim = nil
+
+local function playAnimation(id)
+    if not humanoid then humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid") end
+    if humanoid then
+        local animation = Instance.new("Animation")
+        animation.AnimationId = "rbxassetid://" .. id
+        local track = humanoid:LoadAnimation(animation)
+        track.Looped = true
+        track:Play()
+        return track
+    end
+end
+
+local function stopAnimation()
+    if currentTrack then
+        currentTrack:Stop()
+        currentTrack:Destroy()
+        currentTrack = nil
+    end
+end
+
+local animOptions = {}
+for name, _ in pairs(animations) do
+    table.insert(animOptions, name)
+end
+
+GamepassFe:AddDropdown({
+    Name = "اختر حركة",
+    Options = animOptions,
+    Default = nil,
+    Callback = function(Value)
+        selectedAnim = animations[Value]
+    end
+})
+
+GamepassFe:AddToggle({
+    Name = "تشغيل/إيقاف الحركة",
+    Default = false,
+    Callback = function(Value)
+        if Value then
+            if selectedAnim then
+                stopAnimation()
+                currentTrack = playAnimation(selectedAnim)
+            end
+        else
+            stopAnimation()
+        end
+    end
+})
+
+GamepassFe:AddSection({ "vip افكتات" })
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ApplyEmmiter = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("ApplyEmmiter")
+
+local Effects = {
+    ["أبيض مجاني"] = "0002FreeWhite", ["أصفر مجاني"] = "0003FreeYellow", ["برتقالي مجاني"] = "0004FreeOrange",
+    ["أخضر مجاني"] = "0005FreeGreen", ["أزرق مجاني"] = "0006FreeBlue", ["بنفسجي مجاني"] = "0007FreePurple",
+    ["زهري مجاني"] = "0008FreePink", ["أحمر مجاني"] = "0009FreeRed", ["قلوب صفراء"] = "001HeartsYellow",
+    ["قلوب خضراء"] = "002HeartsGreen", ["قلوب زرقاء"] = "003HeartsBlue", ["قلوب بنفسجية"] = "004HeartsPurple",
+    ["قلوب زهرية"] = "005HeartsPink", ["قلوب حمراء"] = "006HeartsRed", ["نجوم وميض أبيض"] = "020TwinkleWhite",
+    ["نجوم وميض أصفر"] = "021TwinkleYellow", ["نجوم وميض أخضر"] = "022TwinkleGreen", ["نجوم وميض بنفسجي"] = "023TwinklePurple",
+    ["نجوم وميض زهري"] = "024TwinklePink", ["نجوم وميض أحمر"] = "025TwinkleRed", ["نار بيضاء"] = "030FireWhite",
+    ["نار برتقالية"] = "031FireOrange", ["نار خضراء"] = "032FireGreen", ["نار زرقاء"] = "033FireBlue",
+    ["نار بنفسجية"] = "034FirePurple", ["نار سوداء"] = "035FireBlack", ["شرر أبيض"] = "050SparksWhite",
+    ["شرر أخضر"] = "051SparksGreen", ["شرر أزرق"] = "052SparksBlue", ["شرر بنفسجي"] = "053SparksPurple",
+    ["شرر زهري"] = "054SparksPink", ["شرر أحمر"] = "055SparksRed", ["دخان أبيض"] = "080SmokeWhite",
+    ["دخان أصفر"] = "081SmokeYellow", ["دخان برتقالي"] = "082SmokeOrange", ["دخان أخضر"] = "083SmokeGreen",
+    ["دخان أزرق"] = "084SmokeBlue", ["دخان بنفسجي"] = "085SmokePurple", ["دخان أحمر"] = "086SmokeRed",
+    ["دخان أسود"] = "087SmokeBlack", ["نجوم بيضاء"] = "090StarWhite", ["نجوم برتقالية"] = "091StarOrange",
+    ["نجوم خضراء"] = "092StarGreen", ["نجوم زرقاء"] = "093StarBlue", ["نجوم بنفسجية"] = "094StarPurple",
+    ["نجوم زهرية"] = "095StarPink", ["نجوم حمراء"] = "096StarRed"
+}
+
+local SelectedEffect = nil
+local ActiveEffect = false
+
+local effectOptions = {}
+for name, _ in pairs(Effects) do
+    table.insert(effectOptions, name)
+end
+
+GamepassFe:AddDropdown({
+    Name = "اختار افكت",
+    Options = effectOptions,
+    Default = effectOptions[1],
+    Callback = function(Value)
+        SelectedEffect = Effects[Value]
+        if ActiveEffect then
+            ApplyEmmiter:InvokeServer(123456789, SelectedEffect)
+        end
+    end
+})
+
+GamepassFe:AddToggle({
+    Name = "تفعيل الافكت",
+    Default = false,
+    Callback = function(Value)
+        ActiveEffect = Value
+        if ActiveEffect and SelectedEffect then
+            ApplyEmmiter:InvokeServer(123456789, SelectedEffect)
+        else
+            ApplyEmmiter:InvokeServer(0, "Clear")
+        end
+    end
+})
